@@ -22,6 +22,10 @@ public class Task {
     @Column(nullable = false, length = 30)
     private TaskStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private TaskPriority priority;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -33,6 +37,7 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = TaskStatus.TODO;
+        this.priority = TaskPriority.MEDIUM;
         this.createdAt = Instant.now();
     }
 
@@ -51,6 +56,8 @@ public class Task {
     public TaskStatus getStatus() {
         return status;
     }
+
+    public TaskPriority getPriority() { return priority; }
 
     public Instant getCreatedAt() {
         return createdAt;

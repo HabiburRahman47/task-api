@@ -14,17 +14,33 @@ public class TaskService {
     }
 
     @Transactional
-    public Task createTask(CreateTaskRequest request) {
+    public TaskResponse createTask(CreateTaskRequest request) {
         Task task = new Task(
                 request.title(),
                 request.description()
         );
 
-        return taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
+        return toResponse(savedTask);
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getAllTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private TaskResponse toResponse(Task task) {
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getPriority(),
+                task.getCreatedAt()
+        );
     }
 
 
