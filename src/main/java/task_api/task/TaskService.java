@@ -2,6 +2,7 @@ package task_api.task;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import task_api.task.exception.TaskNotFoundException;
 
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public TaskResponse getTaskById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow( () -> new TaskNotFoundException(id));
+        return toResponse(task);
+    }
+
     private TaskResponse toResponse(Task task) {
         return new TaskResponse(
                 task.getId(),
@@ -42,6 +50,5 @@ public class TaskService {
                 task.getCreatedAt()
         );
     }
-
 
 }

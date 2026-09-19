@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -40,6 +41,19 @@ public class TaskController {
     @GetMapping
     public List<TaskResponse> getAllTasks() {
         return taskService.getAllTasks();
+    }
+
+    @Operation(
+            summary = "Get a task by Id",
+            description = "Return one task by its database id"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Task found"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @GetMapping("/{id}")
+    public TaskResponse getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
     }
 
 }

@@ -28,36 +28,40 @@ public class TaskControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private TaskResponse createTaskResponse() {
+        return new TaskResponse(
+                1L,
+                "Learn Spring Boot",
+                "Build REST API",
+                TaskStatus.TODO,
+                TaskPriority.MEDIUM,
+                Instant.parse("2026-09-18T02:00:00Z")
+        );
+    }
+
+    private CreateTaskRequest createTaskRequest() {
+        return new CreateTaskRequest(
+                "Learn Spring Boot",
+                "Build REST API"
+        );
+    }
+
     @Test
     void shouldGetAllTasks() throws Exception {
         when(taskService.getAllTasks())
                 .thenReturn(List.of(
-                        new TaskResponse(
-                                1L,
-                                "Learn Spring test",
-                                "Learn MockMvc",
-                                TaskStatus.TODO,
-                                TaskPriority.MEDIUM,
-                                Instant.now()
-                        )
+                       createTaskResponse()
                 ));
         mockMvc.perform(get("/api/tasks"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Learn Spring test"));
+                .andExpect(jsonPath("$[0].title").value("Learn Spring Boot"));
 
     }
 
     @Test
     void shouldCreateTask() throws Exception {
-        TaskResponse taskResponse = new TaskResponse(
-                1L,
-                "Learn Spring Boot",
-                "Build REST API with Spring Boot",
-                TaskStatus.TODO,
-                TaskPriority.MEDIUM,
-                Instant.now()
-        );
+        TaskResponse taskResponse = createTaskResponse();
 
         when(taskService.createTask(any(CreateTaskRequest.class)))
                 .thenReturn(taskResponse);
@@ -65,13 +69,9 @@ public class TaskControllerTest {
         mockMvc.perform(
                 post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "title": "Learn Spring Boot",
-                                    "description": "Build REST API with Spring Boot"
-                                }
-                                """)
-        )
+                        .content(objectMapper.writeValueAsString(
+                                createTaskRequest()
+                        )))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("Learn Spring Boot"))
@@ -92,6 +92,16 @@ public class TaskControllerTest {
         )
                 .andExpect(status().isBadRequest());
 
+    }
+
+    @Test
+    void shouldGetTaskById() throws Exception {
+        when(taskService.getTaskById(1L))
+                .thenReturn(createTaskResponse());
+
+        mockMvc.perform(get("/api/tasks/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
     }
 
 }

@@ -18,6 +18,7 @@ A REST API for task management system with Spring Boot and PostgreSQL.
 
 - Create a task
 - List all tasks
+- Get a task by Id
 - Request validation
 - PostgreSQL persistence
 - Versioned database migrations
@@ -153,6 +154,30 @@ Response status:
 ```text
 200 OK
 ```
+### Get a task by ID
+```http
+GET /api/tasks/{id}
+```
+Example:
+```bash
+curl -i http://localhost:8084/api/tasks/1
+```
+
+Response:
+```json
+{
+  "id": 1,
+  "title": "Learn Spring Boot",
+  "description": "Build a REST API",
+  "status": "TODO",
+  "priority": "MEDIUM",
+  "createdAt": "2026-09-18T00:00:00Z"
+} 
+```
+Response status:
+- `200 OK` when the task exists.
+- `404 Not Found` when the task does not exist.
+
 ## Database Migrations
 
 Flyway migration files are located at:

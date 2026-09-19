@@ -37,4 +37,17 @@ public class GlobalExceptionHandler {
         );
 
     }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleTaskNotFound(
+            TaskNotFoundException ex
+    ) {
+        return new ApiError(
+                Instant.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                Map.of()
+        );
+    }
 }
