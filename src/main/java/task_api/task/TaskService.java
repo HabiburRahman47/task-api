@@ -40,6 +40,32 @@ public class TaskService {
         return toResponse(task);
     }
 
+    @Transactional
+    public TaskResponse updateTask(Long id, UpdateTaskRequest request) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
+
+        if (request.title() != null) {
+            task.setTitle(request.title());
+        }
+
+        if (request.description() != null) {
+            task.setDescription(request.description());
+        }
+
+        if (request.status() != null) {
+            task.setStatus(request.status());
+        }
+
+        if (request.priority() != null) {
+            task.setPriority(request.priority());
+        }
+
+        System.out.println("UpdateRequest: " + request);
+        System.out.println("findResult: "+ task);
+        return toResponse(task);
+    }
+
     private TaskResponse toResponse(Task task) {
         return new TaskResponse(
                 task.getId(),

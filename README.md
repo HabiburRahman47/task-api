@@ -19,6 +19,7 @@ A REST API for task management system with Spring Boot and PostgreSQL.
 - Create a task
 - List all tasks
 - Get a task by Id
+- Update a task 
 - Request validation
 - PostgreSQL persistence
 - Versioned database migrations
@@ -177,6 +178,43 @@ Response:
 Response status:
 - `200 OK` when the task exists.
 - `404 Not Found` when the task does not exist.
+
+### Update a task
+```http
+PATCH /api/tasks/{id}
+```
+The request may contain one or more fields:
+
+```json
+{
+  "status": "IN_PPROGRESS",
+  "priority": "HIGH"
+}
+```
+
+Example:
+```bash
+curl -i -X PATCH http://localhost:8084/api/tasks/1 \
+-H "Content-Type: application/json" \
+-d '{
+  "status": "IN_PROGRESS",
+  "priority": "HIGH"
+}'
+```
+Supported status values:
+-  `TODO`
+- `IN_PROGRESS`
+- `DONE`
+
+Supported priority values:
+- `LOW`
+- `MEDIUM`
+- `HIGH`
+Response statuses:
+- `200 OK` when the task is updated.
+- `400 Bad Request` when the request is invalid.
+- `404 Not Found` when the task does not exist.
+
 
 ## Database Migrations
 

@@ -56,4 +56,18 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
+    @Operation(
+            summary = "Update a task",
+            description = "Update only the fields supplied in the request."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Task updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @PatchMapping("/{id}")
+    public TaskResponse updateTask(@PathVariable Long id,
+                                   @Valid @RequestBody UpdateTaskRequest request) {
+        return taskService.updateTask(id, request);
+    }
+
 }

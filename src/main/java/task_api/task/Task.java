@@ -62,4 +62,20 @@ public class Task {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
+    public void setPriority(TaskPriority priority) {
+        this.priority = priority;
+    }
 }

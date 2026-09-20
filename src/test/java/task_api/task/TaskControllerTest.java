@@ -104,4 +104,37 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.id").value(1));
     }
 
+    @Test
+    void shouldUpdateTask() throws Exception {
+        TaskResponse response = new TaskResponse(
+                1L,
+                "Learn Spring Boot",
+                "Practice partial updates",
+                TaskStatus.IN_PROGRESS,
+                TaskPriority.MEDIUM,
+                java.time.Instant.parse("2026-01-01T00:00:00Z")
+        );
+
+        when(taskService.updateTask(
+                org.mockito.ArgumentMatchers.eq(1L),
+                any(UpdateTaskRequest.class)
+        )).thenReturn(response);
+
+        UpdateTaskRequest request = new UpdateTaskRequest(
+                null,
+                null,
+                TaskStatus.IN_PROGRESS,
+                null
+        );
+
+        mockMvc.perform(patch("/api/tasks/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+
+
+    }
+
 }
