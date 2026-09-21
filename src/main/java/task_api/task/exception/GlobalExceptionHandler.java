@@ -1,53 +1,73 @@
 package task_api.task.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.core.Ordered;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.core.annotation.Order;
 
-import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleValidationException(
+    public ProblemDetail handleValidation(
             MethodArgumentNotValidException exception
     ) {
-        Map<String, String> fieldErrors = new LinkedHashMap<>();
+        Map<String, String> errors = new LinkedHashMap<>();
 
         exception.getBindingResult()
                 .getFieldErrors()
-                .forEach(err ->
-                        fieldErrors.put(
-                                err.getField(),
-                                err.getDefaultMessage()
+                .forEach(error ->
+                        errors.put(
+                                error.getField(),
+                                error.getDefaultMessage()
                         )
                 );
 
-        return new ApiError(
-                Instant.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                fieldErrors
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "One or more fields are invalid"
         );
 
+        problemDetail.setTitle("Validation Failed");
+        problemDetail.setProperty("errors", errors);
+
+        return problemDetail;
     }
 
     @ExceptionHandler(TaskNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError handleTaskNotFound(
+    public ProblemDetail handleTaskNotFound(
             TaskNotFoundException ex
     ) {
-        return new ApiError(
-                Instant.now(),
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                Map.of()
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
         );
+
+        problemDetail.setTitle("Task Not found");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleMalFormedJson(
+        HttpMessageNotReadableException ex
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "The request body contain invalid Json"
+        );
+        problemDetail.setTitle("Malformed JSON request");
+        return problemDetail;
+
     }
 }
