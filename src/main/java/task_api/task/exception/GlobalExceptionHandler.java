@@ -70,4 +70,18 @@ public class GlobalExceptionHandler {
         return problemDetail;
 
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(
+            IllegalArgumentException exception
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+
+        problemDetail.setTitle("Invalid Request Parameter");
+
+        return problemDetail;
+    }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,14 +50,34 @@ public class TaskControllerTest {
 
     @Test
     void shouldGetAllTasks() throws Exception {
-        when(taskService.getAllTasks())
-                .thenReturn(List.of(
-                       createTaskResponse()
-                ));
-        mockMvc.perform(get("/api/tasks"))
+        TaskPageResponse response = new TaskPageResponse(
+                List.of(
+                        new TaskResponse(
+                                1L,
+                                "Learn Spring Boot",
+                                "Build a REST API",
+                                TaskStatus.TODO,
+                                TaskPriority.MEDIUM,
+                                java.time.Instant.parse("2026-01-10T00:00:00Z")
+                        )
+                ),
+                0,
+                10,
+                1,
+                1,
+                true,
+                true
+        );
+        when(taskService.getAllTasks(any(Pageable.class))).thenReturn(response);
+
+        mockMvc.perform(get("/api/tasks")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "createdAt,desc")
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Learn Spring Boot"));
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Learn Spring Boot"));
 
     }
 

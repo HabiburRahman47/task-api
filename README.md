@@ -134,21 +134,46 @@ Response status:
 ```http
 GET /api/tasks
 ```
+The endpoint supports pagination and sorting.
+Query parameters:
+| Parameter  | Default | Description   |
+|------------|----------|---------------|
+| `page`     | `0`      | Zero-based page number |
+| `size`     | `10`     | Number of task per page|
+| `sort`    | `createdAt,desc`| Sort property and direction|
+
+Example:
+```bash
+curl -i "http://localhost:8084/api/tasks"
+```
+```bash
+curl -i "http://localhost:8084/api/tasks?page-0&size=10"
+```
+```bash
+curl -i "http://localhost:8084/api/tasks?page-0&size=10&sort=title,asc"
+```
 
 Response:
 
 ```json
-[
-  {
-    "id": 1,
-    "title": "Learn Spring Boot",
-    "description": "Build a REST API",
-    "status": "TODO",
-    "priority": "MEDIUM",
-    "createdAt": "2026-09-17T00:00:00Z"
-  }
-]
+{
+  "content": [],
+  "page": 0,
+  "size": 10,
+  "totalElements": 0,
+  "totalPages": 0,
+  "first": true,
+  "last": true
+}
 ```
+
+Allowed sort properties:
+
+- `id`
+- `title`
+- `status`
+- `priority`
+- `createdAt`
 
 Response status:
 

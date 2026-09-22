@@ -1,5 +1,7 @@
 package task_api.task;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task_api.task.exception.TaskNotFoundException;
@@ -26,12 +28,24 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public List<TaskResponse> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
+    public TaskPageResponse getAllTasks(Pageable pageable) {
+        Page<Task> taskPage = taskRepository.findAll(pageable);
+
+        List<TaskResponse> content = taskPage
                 .map(this::toResponse)
-                .toList();
-    }
+                .getContent();
+
+        return new TaskPageResponse(
+                content,
+                taskPage.getNumber(),
+                taskPage.getSize(),
+                taskPage.getTotalElements(),
+                taskPage.getTotalPages(),
+                taskPage.isFirst(),
+                taskPage.isLast()
+        );
+
+        }
 
     @Transactional(readOnly = true)
     public TaskResponse getTaskById(Long id) {
