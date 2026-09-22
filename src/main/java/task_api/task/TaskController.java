@@ -41,11 +41,17 @@ public class TaskController {
 
     @Operation(
             summary = "List tasks",
-            description = "Returns a paginated and sorted list of tasks."
+            description = "Returns a paginated, sorted and filtered list of tasks."
     )
     @ApiResponse(responseCode = "200", description = "Tasks returned successfully")
     @GetMapping
     public TaskPageResponse getAllTasks(
+            @Parameter(description = "Filter by task status")
+            @RequestParam(required = false) TaskStatus status,
+
+            @Parameter(description = "Filter by task priority")
+            @RequestParam(required = false) TaskPriority priority,
+
             @Parameter(description = "Zero-based page number")
             @RequestParam(defaultValue = "0") int page,
 
@@ -68,7 +74,11 @@ public class TaskController {
                 size,
                 parseSort(sort)
         );
-        return taskService.getAllTasks(pageable);
+        return taskService.getAllTasks(
+                status,
+                priority,
+                pageable
+        );
     }
 
 

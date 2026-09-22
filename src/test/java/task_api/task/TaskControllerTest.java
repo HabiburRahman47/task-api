@@ -13,7 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,9 +68,15 @@ public class TaskControllerTest {
                 true,
                 true
         );
-        when(taskService.getAllTasks(any(Pageable.class))).thenReturn(response);
+        when(taskService.getAllTasks(
+                eq(TaskStatus.TODO),
+                eq(TaskPriority.MEDIUM),
+                any(Pageable.class)
+        )).thenReturn(response);
 
         mockMvc.perform(get("/api/tasks")
+                        .param("status", "TODO")
+                        .param("priority", "MEDIUM")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "createdAt,desc")
@@ -141,7 +147,7 @@ public class TaskControllerTest {
         );
 
         when(taskService.updateTask(
-                org.mockito.ArgumentMatchers.eq(1L),
+                eq(1L),
                 any(UpdateTaskRequest.class)
         )).thenReturn(response);
 
@@ -160,6 +166,37 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
 
 
+    }
+
+    @Test
+    void shouldFilterTaskByStatusAndPriority() throws Exception {
+        // Arrange
+        TaskPageResponse response = new TaskPageResponse(
+                List.of(),
+                0,
+                10,
+                0,
+                0,
+                true,
+                true
+        );
+        when(taskService.getAllTasks(
+                eq(TaskStatus.TODO),
+                eq(TaskPriority.MEDIUM),
+                any(Pageable.class)
+        )).thenReturn(response);
+
+        // Act
+        mockMvc.perform(get("/api/tasks")
+                    .param("status", "TODO")
+                    .param("priority", "MEDIUM"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isEmpty())
+                .andExpect(jsonPath("$.totalElements").value(0));
+
+        // Assert
+
+        // Verify
     }
 
 }

@@ -23,6 +23,7 @@ A REST API for task management system with Spring Boot and PostgreSQL.
 - Request validation
 - PostgreSQL persistence
 - Versioned database migrations
+- Pagination and Filtering
 
 ## Prerequisites
 
@@ -226,6 +227,24 @@ curl -i -X PATCH http://localhost:8084/api/tasks/1 \
   "priority": "HIGH"
 }'
 ```
+### Filtering tasks
+Tasks can be filtered by statu and priority
+Filter by status:
+```bash
+curl -i "http://localhost:8084/api/tasks?status=TODO"
+```
+Filter by priority:
+
+```bash
+curl -i "http://localhost:8084/api/tasks?priority=HIGH"
+```
+
+Combine filters:
+
+```bash
+curl -i "http://localhost:8084/api/tasks?status=TODO&priority=HIGH"
+```
+
 Supported status values:
 -  `TODO`
 - `IN_PROGRESS`
