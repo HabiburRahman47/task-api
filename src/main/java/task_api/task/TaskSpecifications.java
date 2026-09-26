@@ -21,9 +21,34 @@ public class TaskSpecifications {
                 criteriaBuilder.equal(root.get("priority"), priority);
     }
 
-    public static Specification<Task> build(TaskStatus status, TaskPriority priority) {
+    public static Specification<Task> build(String search, TaskStatus status, TaskPriority priority) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (search != null && !search.isBlank()) {
+                String pattern = "%" + search.toLowerCase() + "%";
+
+                Predicate titleMatches = criteriaBuilder.like(
+                        criteriaBuilder.lower(
+                                root.get("title")
+                        ),
+                        pattern
+                );
+
+                Predicate descriptionMatches = criteriaBuilder.like(
+                        criteriaBuilder.lower(
+                                root.get("description")
+                        ),
+                        pattern
+                );
+
+                predicates.add(
+                        criteriaBuilder.or(
+                                titleMatches,
+                                descriptionMatches
+                        )
+                );
+            }
 
             if (status != null) {
                 predicates.add(

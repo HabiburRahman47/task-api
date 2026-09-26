@@ -46,6 +46,8 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "Tasks returned successfully")
     @GetMapping
     public TaskPageResponse getAllTasks(
+            @Parameter(description = "Case-insensitive search by title and description")
+            @RequestParam(required = false) String search,
             @Parameter(description = "Filter by task status")
             @RequestParam(required = false) TaskStatus status,
 
@@ -75,6 +77,7 @@ public class TaskController {
                 parseSort(sort)
         );
         return taskService.getAllTasks(
+                search,
                 status,
                 priority,
                 pageable

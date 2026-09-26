@@ -245,6 +245,24 @@ Combine filters:
 curl -i "http://localhost:8084/api/tasks?status=TODO&priority=HIGH"
 ```
 
+### Search tasks
+Search is case-insensitive and checks both the task title and description.
+
+Search by title and description
+```bash
+curl -i "http://localhost:8084/api/tasks?search=spring"
+```
+
+Search with status and priority
+```bash
+curl -i "http://localhost:8084/api/tasks?search=spring&status=TODP&priority=LOW"
+```
+Search with pagination and sorting
+```bash
+curl -i "http://localhost:8084/api/tasks?search=spring&page=0&size=10&sort=createdAt,desc"
+```
+
+
 Supported status values:
 -  `TODO`
 - `IN_PROGRESS`

@@ -69,12 +69,14 @@ public class TaskControllerTest {
                 true
         );
         when(taskService.getAllTasks(
+                eq("spring"),
                 eq(TaskStatus.TODO),
                 eq(TaskPriority.MEDIUM),
                 any(Pageable.class)
         )).thenReturn(response);
 
         mockMvc.perform(get("/api/tasks")
+                        .param("search", "spring")
                         .param("status", "TODO")
                         .param("priority", "MEDIUM")
                         .param("page", "0")
@@ -181,6 +183,7 @@ public class TaskControllerTest {
                 true
         );
         when(taskService.getAllTasks(
+                eq("spring"),
                 eq(TaskStatus.TODO),
                 eq(TaskPriority.MEDIUM),
                 any(Pageable.class)
@@ -188,6 +191,7 @@ public class TaskControllerTest {
 
         // Act
         mockMvc.perform(get("/api/tasks")
+                    .param("search", "spring")
                     .param("status", "TODO")
                     .param("priority", "MEDIUM"))
                 .andExpect(status().isOk())
@@ -196,6 +200,37 @@ public class TaskControllerTest {
 
         // Assert
 
+        // Verify
+    }
+
+    void shouldSearchTaskWithFilter() throws Exception {
+        // Arrange
+        TaskPageResponse response = new TaskPageResponse(
+                List.of(),
+                0,
+                10,
+                0,
+                0,
+                true,
+                true
+        );
+
+        when(taskService.getAllTasks(
+                eq("spring"),
+                eq(TaskStatus.TODO),
+                eq(TaskPriority.MEDIUM),
+                any(Pageable.class)
+        )).thenReturn(response);
+
+        // Act
+        mockMvc.perform(get("/api/tasks")
+                    .param("search", "spring")
+                    .param("status", "TODO")
+                    .param("priority", "MEDIUM"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isEmpty())
+                .andExpect(jsonPath("$.totalElements").value(0));
+        // Assert
         // Verify
     }
 

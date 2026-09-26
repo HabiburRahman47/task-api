@@ -30,11 +30,12 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public TaskPageResponse getAllTasks(
+            String search,
             TaskStatus status,
             TaskPriority priority,
             Pageable pageable
     ) {
-        Specification<Task> specification = TaskSpecifications.build(status, priority);
+        Specification<Task> specification = TaskSpecifications.build(search, status, priority);
 
         Page<Task> taskPage = taskRepository.findAll(specification, pageable);
 
