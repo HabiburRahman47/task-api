@@ -27,7 +27,7 @@ jobs:
           --health-cmd "pg_isready -U task_user"
           --health-interval 10s
           --health-timeout 5s
-          --health-reties 5
+          --health-retries 5
 
     steps:
       - name: Checkout source code
