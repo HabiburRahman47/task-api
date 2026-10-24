@@ -112,6 +112,21 @@ public class TaskController {
         return taskService.updateTask(id, request);
     }
 
+    @Operation(
+            summary = "Delete a task",
+            description = "Permanently deletes a task by its database ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Long id) {
+       taskService.deleteTask(id);
+    }
+
+
     private Sort parseSort(String sort) {
         String[] sortParts = sort.split(",");
         String property = sortParts[0];
