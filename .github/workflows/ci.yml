@@ -19,8 +19,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_DB: task_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: tast_user
+          POSTGRES_PASSWORD: task_password
         ports:
           - 5432:5432
         options: >-
