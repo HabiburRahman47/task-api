@@ -46,6 +46,6 @@ jobs:
       - name: Build and run tests
         run: ./mvnw --batch-mode verify
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskdb
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/task_db
           SPRING_DATASOURCE_USERNAME: tast_user
           SPRING_DATASOURCE_PASSWORD: task_password
